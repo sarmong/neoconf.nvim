@@ -57,7 +57,9 @@ function M.on_new_config(config, root_dir, original_config)
     options.import.coc and Settings.get_global():get("coc") or {},
     options.import.nlsp and Settings.get_global():get("nlsp." .. config.name) or {},
     -- merge in local lsp settings
-    options.import.vscode and Settings.get_local(root_dir):get("vscode") or {},
+    options.import.vscode and Settings.get_local(root_dir):get("vscode." .. config.name)
+      or Settings.get_local(root_dir):get("vscode")
+      or {},
     options.import.coc and Settings.get_local(root_dir):get("coc") or {},
     options.import.nlsp and Settings.get_local(root_dir):get("nlsp." .. config.name) or {},
     Settings.get_local(root_dir):get("lspconfig." .. config.name, { expand = true }) or {}
