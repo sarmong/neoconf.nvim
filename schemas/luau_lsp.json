@@ -18,6 +18,14 @@
       "scope": "resource",
       "type": "number"
     },
+    "luau-lsp.bytecode.typeInfoLevel": {
+      "default": 1,
+      "markdownDescription": "The `typeInfoLevel` to use when compiling bytecode",
+      "maximum": 1,
+      "minimum": 0,
+      "scope": "resource",
+      "type": "number"
+    },
     "luau-lsp.bytecode.vectorCtor": {
       "default": "new",
       "markdownDescription": "The `vectorCtor` to use when compiling bytecode",
@@ -221,6 +229,12 @@
       "scope": "resource",
       "type": "boolean"
     },
+    "luau-lsp.inlayHints.makeInsertable": {
+      "default": true,
+      "markdownDescription": "Whether type annotation inlay hints can be made insertable by clicking",
+      "scope": "resource",
+      "type": "boolean"
+    },
     "luau-lsp.inlayHints.parameterNames": {
       "default": "none",
       "enum": [
@@ -251,11 +265,27 @@
       "scope": "resource",
       "type": "boolean"
     },
+    "luau-lsp.platform.type": {
+      "default": "roblox",
+      "enum": [
+        "standard",
+        "roblox"
+      ],
+      "markdownDescription": "Platform-specific support features",
+      "scope": "window",
+      "type": "string"
+    },
     "luau-lsp.plugin.enabled": {
       "default": false,
       "markdownDescription": "Use Roblox Studio Plugin to provide DataModel information",
       "scope": "window",
       "type": "boolean"
+    },
+    "luau-lsp.plugin.maximumRequestBodySize": {
+      "default": "3mb",
+      "markdownDescription": "The maximum request body size accepted from the plugin, in a string representation parse-able by the [bytes](https://www.npmjs.com/package/bytes) library",
+      "scope": "window",
+      "type": "string"
     },
     "luau-lsp.plugin.port": {
       "default": 3667,
@@ -350,6 +380,8 @@
     },
     "luau-lsp.types.roblox": {
       "default": true,
+      "deprecationMessage": "Deprecated: Please use luau-lsp.platform.type instead.",
+      "markdownDeprecationMessage": "**Deprecated**: Please use `#luau-lsp.platform.type#` instead.",
       "markdownDescription": "Load in and automatically update Roblox type definitions for the type checker",
       "scope": "window",
       "tags": [

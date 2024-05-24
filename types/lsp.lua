@@ -38,6 +38,22 @@
 ---@class lspconfig.settings.awkls
 ---@field awk-ide-vscode _.lspconfig.settings.awkls.Awk-ide-vscode
 
+---@class _.lspconfig.settings.bashls.Shfmt
+-- Allow boolean operators (like && and ||) to start a line.
+---@field binaryNextLine boolean
+-- Indent patterns in case statements.
+---@field caseIndent boolean
+-- Place function opening braces on a separate line.
+---@field funcNextLine boolean
+-- Controls the executable used for Shfmt formatting. An empty string will disable formatting.
+-- 
+-- ```lua
+-- default = "shfmt"
+-- ```
+---@field path string
+-- Follow redirection operators with a space.
+---@field spaceRedirects boolean
+
 ---@class _.lspconfig.settings.bashls.BashIde
 -- Maximum number of files to analyze in the background. Set to 0 to disable background analysis.
 -- 
@@ -79,6 +95,7 @@
 -- default = "shellcheck"
 -- ```
 ---@field shellcheckPath string
+---@field shfmt _.lspconfig.settings.bashls.Shfmt
 
 ---@class lspconfig.settings.bashls
 ---@field bashIde _.lspconfig.settings.bashls.BashIde
@@ -866,6 +883,13 @@
 ---@field references _.lspconfig.settings.fsautocomplete.References
 ---@field signature _.lspconfig.settings.fsautocomplete.Signature
 
+---@class _.lspconfig.settings.fsautocomplete.TransparentCompiler
+-- EXPERIMENTAL: Enables the FSharp Compiler Service's [transparent compiler](https://github.com/dotnet/fsharp/pull/15179) feature. Requires restart.
+---@field enabled boolean
+
+---@class _.lspconfig.settings.fsautocomplete.Fcs
+---@field transparentCompiler _.lspconfig.settings.fsautocomplete.TransparentCompiler
+
 ---@class _.lspconfig.settings.fsautocomplete.Gc
 -- Configures the garbage collector to [conserve memory](https://learn.microsoft.com/en-us/dotnet/core/runtime-config/garbage-collector#conserve-memory) at the expense of more frequent garbage collections and possibly longer pause times. Acceptable values are 0-9. Any non-zero value will allow the [Large Object Heap](https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/large-object-heap) to be compacted automatically if it has too much fragmentation. Requires restart.
 ---@field conserveMemory integer
@@ -883,7 +907,7 @@
 ---@field server boolean
 
 ---@class _.lspconfig.settings.fsautocomplete.Fsac
--- Appends the '--attachdebugger' argument to fsac, this will allow you to attach a debugger.
+-- Appends the `--attachdebugger` argument to fsac, this will allow you to attach a debugger.
 ---@field attachDebugger boolean
 -- The MemoryCacheOptions.SizeLimit for caching typechecks.
 -- 
@@ -1092,6 +1116,7 @@
 ---@field excludeProjectDirectories any[]
 -- Includes external (from unopened modules and namespaces) symbols in autocomplete
 ---@field externalAutocomplete boolean
+---@field fcs _.lspconfig.settings.fsautocomplete.Fcs
 ---@field fsac _.lspconfig.settings.fsautocomplete.Fsac
 -- An array of additional command line parameters to pass to FSI when it is started. See [the Microsoft documentation](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/fsharp-interactive-options) for an exhaustive list.
 -- 
@@ -2167,6 +2192,28 @@
 -- ```
 ---@field diagnosticsOn boolean
 
+---@class _.lspconfig.settings.hie.Config
+-- Set path to 'cabal-fmt' executable
+-- 
+-- ```lua
+-- default = "cabal-fmt"
+-- ```
+---@field path string
+
+---@class _.lspconfig.settings.hie.Cabal-fmt
+---@field config _.lspconfig.settings.hie.Config
+
+---@class _.lspconfig.settings.hie.Config
+-- Set path to 'cabal-gild' executable
+-- 
+-- ```lua
+-- default = "cabal-gild"
+-- ```
+---@field path string
+
+---@class _.lspconfig.settings.hie.Cabal-gild
+---@field config _.lspconfig.settings.hie.Config
+
 ---@class _.lspconfig.settings.hie.CallHierarchy
 -- Enables callHierarchy plugin
 -- 
@@ -2233,9 +2280,9 @@
 ---@field globalOn boolean
 
 ---@class _.lspconfig.settings.hie.Config
--- Call out to an external "fourmolu" executable, rather than using the bundled library
+-- Call out to an external "fourmolu" executable, rather than using the bundled library.
 ---@field external boolean
--- Set path to executable (for "external" mode)
+-- Set path to executable (for "external" mode).
 -- 
 -- ```lua
 -- default = "fourmolu"
@@ -2477,6 +2524,18 @@
 -- default = "function"
 -- ```
 ---@field functionToken "namespace" | "type" | "class" | "enum" | "interface" | "struct" | "typeParameter" | "parameter" | "variable" | "property" | "enumMember" | "event" | "function" | "method" | "macro" | "keyword" | "modifier" | "comment" | "string" | "number" | "regexp" | "operator" | "decorator"
+-- LSP semantic token type to use for modules
+-- 
+-- ```lua
+-- default = "namespace"
+-- ```
+---@field moduleToken "namespace" | "type" | "class" | "enum" | "interface" | "struct" | "typeParameter" | "parameter" | "variable" | "property" | "enumMember" | "event" | "function" | "method" | "macro" | "keyword" | "modifier" | "comment" | "string" | "number" | "regexp" | "operator" | "decorator"
+-- LSP semantic token type to use for operators
+-- 
+-- ```lua
+-- default = "operator"
+-- ```
+---@field operatorToken "namespace" | "type" | "class" | "enum" | "interface" | "struct" | "typeParameter" | "parameter" | "variable" | "property" | "enumMember" | "event" | "function" | "method" | "macro" | "keyword" | "modifier" | "comment" | "string" | "number" | "regexp" | "operator" | "decorator"
 -- LSP semantic token type to use for pattern synonyms
 -- 
 -- ```lua
@@ -2540,6 +2599,8 @@
 ---@class _.lspconfig.settings.hie.Plugin
 ---@field alternateNumberFormat _.lspconfig.settings.hie.AlternateNumberFormat
 ---@field cabal _.lspconfig.settings.hie.Cabal
+---@field cabal-fmt _.lspconfig.settings.hie.Cabal-fmt
+---@field cabal-gild _.lspconfig.settings.hie.Cabal-gild
 ---@field callHierarchy _.lspconfig.settings.hie.CallHierarchy
 ---@field changeTypeSignature _.lspconfig.settings.hie.ChangeTypeSignature
 ---@field class _.lspconfig.settings.hie.Class
@@ -2676,6 +2737,12 @@
 -- default = ""
 -- ```
 ---@field serverExtraArgs string
+-- Preferred approach for loading package components. Setting this to 'multiple components' (EXPERIMENTAL) allows the build tool (such as `cabal` or `stack`) to [load multiple components at once](https://github.com/haskell/cabal/pull/8726), which is a significant improvement.
+-- 
+-- ```lua
+-- default = "singleComponent"
+-- ```
+---@field sessionLoading "singleComponent" | "multipleComponents"
 -- When manageHLS is set to GHCup, this can overwrite the automatic toolchain configuration with a more specific one. When a tool is omitted, the extension will manage the version (for 'ghc' we try to figure out the version the project requires). The format is '{"tool": "version", ...}'. 'version' accepts all identifiers that 'ghcup' accepts.
 -- 
 -- ```lua
@@ -5493,6 +5560,12 @@
 -- default = {}
 -- ```
 ---@field globals string[]
+-- Find defined global variables using regex.
+-- 
+-- ```lua
+-- default = {}
+-- ```
+---@field globalsRegex string[]
 -- Modify the diagnostic needed file status in a group.
 -- 
 -- * Opened:  only diagnose opened files
@@ -6083,6 +6156,12 @@
 -- default = 1
 -- ```
 ---@field debugLevel number
+-- The `typeInfoLevel` to use when compiling bytecode
+-- 
+-- ```lua
+-- default = 1
+-- ```
+---@field typeInfoLevel number
 -- The `vectorCtor` to use when compiling bytecode
 -- 
 -- ```lua
@@ -6229,6 +6308,12 @@
 ---@class _.lspconfig.settings.luau_lsp.InlayHints
 -- Show inlay hints for function return types
 ---@field functionReturnTypes boolean
+-- Whether type annotation inlay hints can be made insertable by clicking
+-- 
+-- ```lua
+-- default = true
+-- ```
+---@field makeInsertable boolean
 -- Show inlay hints for function parameter names
 -- 
 -- ```lua
@@ -6246,9 +6331,23 @@
 -- Show inlay hints for variable types
 ---@field variableTypes boolean
 
+---@class _.lspconfig.settings.luau_lsp.Platform
+-- Platform-specific support features
+-- 
+-- ```lua
+-- default = "roblox"
+-- ```
+---@field type "standard" | "roblox"
+
 ---@class _.lspconfig.settings.luau_lsp.Plugin
 -- Use Roblox Studio Plugin to provide DataModel information
 ---@field enabled boolean
+-- The maximum request body size accepted from the plugin, in a string representation parse-able by the [bytes](https://www.npmjs.com/package/bytes) library
+-- 
+-- ```lua
+-- default = "3mb"
+-- ```
+---@field maximumRequestBodySize string
 -- Port number to connect to the Studio Plugin
 -- 
 -- ```lua
@@ -6355,6 +6454,7 @@
 ---@field ignoreGlobs string[]
 ---@field index _.lspconfig.settings.luau_lsp.Index
 ---@field inlayHints _.lspconfig.settings.luau_lsp.InlayHints
+---@field platform _.lspconfig.settings.luau_lsp.Platform
 ---@field plugin _.lspconfig.settings.luau_lsp.Plugin
 ---@field require _.lspconfig.settings.luau_lsp.Require
 ---@field signatureHelp _.lspconfig.settings.luau_lsp.SignatureHelp
@@ -8722,6 +8822,14 @@
 ---@field rome _.lspconfig.settings.rome.Rome
 ---@field rome_lsp _.lspconfig.settings.rome.Rome.Lsp
 
+---@class _.lspconfig.settings.rust_analyzer.TermSearch
+-- Term search fuel in "units of work" for assists (Defaults to 400).
+-- 
+-- ```lua
+-- default = 400
+-- ```
+---@field fuel integer
+
 ---@class _.lspconfig.settings.rust_analyzer.Assist
 -- Whether to insert #[must_use] when generating `as_` methods
 -- for enum variants.
@@ -8732,6 +8840,7 @@
 -- default = "todo"
 -- ```
 ---@field expressionFillDefault "todo" | "default"
+---@field termSearch _.lspconfig.settings.rust_analyzer.TermSearch
 
 ---@class _.lspconfig.settings.rust_analyzer.CachePriming
 -- Warm up caches on project load.
@@ -8965,7 +9074,7 @@
 -- If `$saved_file` is part of the command, rust-analyzer will pass
 -- the absolute path of the saved file to the provided command. This is
 -- intended to be used with non-Cargo build systems.
--- Note that `$saved_file` is experimental and may be removed in the futureg.
+-- Note that `$saved_file` is experimental and may be removed in the future.
 -- 
 -- An example command would be:
 -- 
@@ -9082,6 +9191,12 @@
 ---@class _.lspconfig.settings.rust_analyzer.TermSearch
 -- Whether to enable term search based snippets like `Some(foo.bar().baz())`.
 ---@field enable boolean
+-- Term search fuel in "units of work" for autocompletion (Defaults to 200).
+-- 
+-- ```lua
+-- default = 200
+-- ```
+---@field fuel integer
 
 ---@class _.lspconfig.settings.rust_analyzer.Completion
 ---@field autoimport _.lspconfig.settings.rust_analyzer.Autoimport
@@ -10944,8 +11059,20 @@
 -- ```
 ---@field validate boolean
 
+---@class _.lspconfig.settings.tailwindcss.Trace
+-- Traces the communication between VS Code and the Tailwind CSS Language Server.
+-- 
+-- ```lua
+-- default = "off"
+-- ```
+---@field server "off" | "messages" | "verbose"
+
+---@class _.lspconfig.settings.tailwindcss.Tailwindcss-intellisense
+---@field trace _.lspconfig.settings.tailwindcss.Trace
+
 ---@class lspconfig.settings.tailwindcss
 ---@field tailwindCSS _.lspconfig.settings.tailwindcss.TailwindCSS
+---@field tailwindcss-intellisense _.lspconfig.settings.tailwindcss.Tailwindcss-intellisense
 
 ---@class lspconfig.settings.terraformls
 
@@ -11324,19 +11451,6 @@
 -- ```
 ---@field npmIsInstalled boolean
 
----@class _.lspconfig.settings.tsserver.TypeAcquisition
--- Enable/disable package acquisition on the web.
----@field enabled boolean
-
----@class _.lspconfig.settings.tsserver.Web
----@field typeAcquisition _.lspconfig.settings.tsserver.TypeAcquisition
-
----@class _.lspconfig.settings.tsserver.Tsserver
----@field web _.lspconfig.settings.tsserver.Web
-
----@class _.lspconfig.settings.tsserver.Experimental
----@field tsserver _.lspconfig.settings.tsserver.Tsserver
-
 ---@class _.lspconfig.settings.tsserver.Format
 -- Enable/disable default TypeScript formatter.
 -- 
@@ -11703,15 +11817,20 @@
 -- default = true
 -- ```
 ---@field enabled boolean
--- Suppresses semantic errors. This is needed when using external packages as these can't be included analyzed on web.
+-- Suppresses semantic errors on web even when project wide IntelliSense is enabled. This is always on when project wide IntelliSense is not enabled or available. See `#typescript.tsserver.web.projectWideIntellisense.enabled#`
+---@field suppressSemanticErrors boolean
+
+---@class _.lspconfig.settings.tsserver.TypeAcquisition
+-- Enable/disable package acquisition on the web. This enables IntelliSense for imported packages. Requires `#typescript.tsserver.web.projectWideIntellisense.enabled#`. Currently not supported for Safari.
 -- 
 -- ```lua
 -- default = true
 -- ```
----@field suppressSemanticErrors boolean
+---@field enabled boolean
 
 ---@class _.lspconfig.settings.tsserver.Web
 ---@field projectWideIntellisense _.lspconfig.settings.tsserver.ProjectWideIntellisense
+---@field typeAcquisition _.lspconfig.settings.tsserver.TypeAcquisition
 
 ---@class _.lspconfig.settings.tsserver.Tsserver
 -- Enables tracing TS server performance to a directory. These trace files can be used to diagnose TS Server performance issues. The log may contain file paths, source code, and other potentially sensitive information from your project.
@@ -11795,7 +11914,6 @@
 ---@field disableAutomaticTypeAcquisition boolean
 -- Enables prompting of users to use the TypeScript version configured in the workspace for Intellisense.
 ---@field enablePromptUseWorkspaceTsdk boolean
----@field experimental _.lspconfig.settings.tsserver.Experimental
 ---@field format _.lspconfig.settings.tsserver.Format
 ---@field implementationsCodeLens _.lspconfig.settings.tsserver.ImplementationsCodeLens
 ---@field inlayHints _.lspconfig.settings.tsserver.InlayHints
